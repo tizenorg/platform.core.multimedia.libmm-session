@@ -1,0 +1,8 @@
+# auto generated tet_scen
+all
+	"Starting Full Test Suite"
+	/utc/utc_mm_session_init_func
+	/utc/utc_mm_session_init_ex_func
+	/utc/utc_mm_session_finish_func
+	"Completed Full Test Suite"
+# EOF

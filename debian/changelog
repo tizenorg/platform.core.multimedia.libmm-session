@@ -1,0 +1,7 @@
+libmm-session (0.1.7-6) unstable; urgency=low
+
+  * Initial release
+  * Git: pkgs/l/libmm-session
+  * Tag: libmm-session_0.1.7-6
+
+ -- Seungbae Shin <seungbae.shin@samsung.com>  Wed, 07 Dec 2011 12:05:55 +0900
