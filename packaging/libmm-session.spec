@@ -4,7 +4,7 @@ Summary:    Mm-session development pkg for samsung
 Version:    0.1.7
 Release:    1
 Group:      TO_BE/FILLED_IN
-License:    TO BE FILLED IN
+License:    Apache-2.0
 Source0:    libmm-session-%{version}.tar.bz2
 Requires(post): /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
@@ -32,16 +32,12 @@ mm-session development package for samsung (devel)
 
 
 %build
-
-%autogen --disable-static
-%configure --disable-static
+%autogen 
+%configure 
 make %{?jobs:-j%jobs}
 
 %install
-rm -rf %{buildroot}
 %make_install
-
-
 
 
 %post -p /sbin/ldconfig
@@ -49,16 +45,11 @@ rm -rf %{buildroot}
 %postun -p /sbin/ldconfig
 
 
-
-
-
 %files
-%defattr(-,root,root,-)
 /usr/lib/libmmfsession.so.*
 
 
 %files devel
-%defattr(-,root,root,-)
 /usr/include/mmf/*.h
 /usr/lib/libmmfsession.so
 /usr/lib/pkgconfig/mm-session.pc
