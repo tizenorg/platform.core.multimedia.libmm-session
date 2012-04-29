@@ -3,7 +3,7 @@ Name:       libmm-session
 Summary:    Mm-session development pkg for samsung
 Version:    0.1.7
 Release:    1
-Group:      TO_BE/FILLED_IN
+Group:      System/Libraries
 License:    Apache-2.0
 Source0:    libmm-session-%{version}.tar.bz2
 Requires(post): /sbin/ldconfig
@@ -28,15 +28,18 @@ mm-session development package for samsung (devel)
 
 
 %prep
-%setup -q -n %{name}-%{version}
+%setup -q
 
 
 %build
-%autogen 
-%configure 
+
+./autogen.sh
+CFLAGS="$CFLAGS -Wp,-D_FORTIFY_SOURCE=0"
+./configure --prefix=/usr 
 make %{?jobs:-j%jobs}
 
 %install
+rm -rf %{buildroot}
 %make_install
 
 
