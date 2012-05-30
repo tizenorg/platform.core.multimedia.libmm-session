@@ -6,6 +6,7 @@ Release:    1
 Group:      System/Libraries
 License:    Apache-2.0
 Source0:    libmm-session-%{version}.tar.bz2
+Source1001: packaging/libmm-session.manifest 
 Requires(post): /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
 BuildRequires:  pkgconfig(audio-session-mgr)
@@ -32,6 +33,7 @@ mm-session development package for samsung (devel)
 
 
 %build
+cp %{SOURCE1001} .
 
 ./autogen.sh
 CFLAGS="$CFLAGS -Wp,-D_FORTIFY_SOURCE=0"
@@ -49,10 +51,12 @@ rm -rf %{buildroot}
 
 
 %files
+%manifest libmm-session.manifest
 /usr/lib/libmmfsession.so.*
 
 
 %files devel
+%manifest libmm-session.manifest
 /usr/include/mmf/*.h
 /usr/lib/libmmfsession.so
 /usr/lib/pkgconfig/mm-session.pc
