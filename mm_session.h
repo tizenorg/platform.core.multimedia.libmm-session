@@ -61,7 +61,15 @@ typedef enum {
 	MM_SESSION_MSG_NUM
 }session_msg_t;
 
-typedef void (*session_callback_fn) (session_msg_t msg, void *user_param);
+typedef enum {
+	MM_SESSION_EVENT_OTHER_APP = 0,
+	MM_SESSION_EVENT_CALL,
+	MM_SESSION_EVENT_ALARM,
+	MM_SESSION_EVENT_EARJACK_UNPLUG,
+	MM_SESSION_EVENT_RESOURCE_CONFLICT,
+}session_event_t;
+
+typedef void (*session_callback_fn) (session_msg_t msg, session_event_t event, void *user_param);
 
 /**
  * This function defines application's Multimedia Session policy
@@ -147,7 +155,7 @@ int mm_session_init(int sessiontype);
  * @code
 #include <mm_session.h>
 
-session_callback_fn session_cb(session_msg_t msg, void *user_param)
+session_callback_fn session_cb(session_msg_t msg,  session_event_t event, void *user_param)
 {
 	struct appdata* ad = (struct appdata*) user_param;
 

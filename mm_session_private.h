@@ -43,9 +43,16 @@ enum MMSessionTypePrivate{
 	MM_SESSION_TYPE_NOTIFY = 10,
 	MM_SESSION_TYPE_CALL,
 	MM_SESSION_TYPE_ALARM,
-	MM_SESSION_TYPE_VIDEOCALL,	
+	MM_SESSION_TYPE_VIDEOCALL,
+	MM_SESSION_TYPE_RICH_CALL,
 	MM_SESSION_PRIVATE_TYPE_NUM
 };
+
+typedef enum {
+	MM_SUBSESSION_TYPE_VOICE = 0,
+	MM_SUBSESSION_TYPE_RINGTONE,
+	MM_SUBSESSION_TYPE_MEDIA
+} mm_subsession_t;
 
 /**
  * This function delete session type information to system
@@ -94,6 +101,34 @@ int _mm_session_util_write_type(int app_pid, int sessiontype);
  * @since
  */
 int _mm_session_util_read_type(int app_pid, int *sessiontype);
+
+/**
+ * This function set sub-session type
+ *
+ * @param	subsession [in] subsession type
+ *
+ * @return	This function returns MM_ERROR_NONE on success, or negative value
+ *			with error code.
+ * @remark	This function is only for internal implementation do not use this at application
+ * 			Session type is unique for each application.
+ * @see		mm_session_get_subsession
+ * @since
+ */
+int mm_session_set_subsession (mm_subsession_t subsession);
+
+/**
+ * This function get current sub-session type
+ *
+ * @param	subsession [out] subsession type
+ *
+ * @return	This function returns MM_ERROR_NONE on success, or negative value
+ *			with error code.
+ * @remark	This function is only for internal implementation do not use this at application
+ * 			Session type is unique for each application.
+ * @see		mm_session_set_subsession
+ * @since
+ */
+int mm_session_get_subsession (mm_subsession_t *subsession);
 
 #ifdef __cplusplus
 }

@@ -1,10 +1,11 @@
+#sbs-git:slp/pkgs/l/libmm-session libmm-session 0.1.7 4ce6db8f3ceb62486e1441679e53e5c7f09201c7
 
 Name:       libmm-session
 Summary:    Mm-session development pkg for samsung
-Version:    0.1.7
-Release:    1
-Group:      System/Libraries
-License:    Apache-2.0
+Version: 0.2.0
+Release:    3
+Group:      TO_BE/FILLED_IN
+License:    TO BE FILLED IN
 Source0:    libmm-session-%{version}.tar.bz2
 Requires(post): /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
@@ -49,11 +50,11 @@ rm -rf %{buildroot}
 
 
 %files
+%defattr(-,root,root,-)
 /usr/lib/libmmfsession.so.*
 
-
 %files devel
+%defattr(-,root,root,-)
 /usr/include/mmf/*.h
 /usr/lib/libmmfsession.so
 /usr/lib/pkgconfig/mm-session.pc
-
