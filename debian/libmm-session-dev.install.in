@@ -1,3 +1,0 @@
-# if your module creates shared libraries
-@PREFIX@/include/mmf/mm_session_private.h
-

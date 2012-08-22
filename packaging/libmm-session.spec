@@ -1,5 +1,3 @@
-#sbs-git:slp/pkgs/l/libmm-session libmm-session 0.1.7 4ce6db8f3ceb62486e1441679e53e5c7f09201c7
-
 Name:       libmm-session
 Summary:    Mm-session development pkg for samsung
 Version: 0.2.0

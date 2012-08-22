@@ -1,5 +1,0 @@
-# if your module creates shared libraries
-@PREFIX@/include/mmf/mm_session.h
-@PREFIX@/lib/*.la
-@PREFIX@/lib/pkgconfig/*
-
