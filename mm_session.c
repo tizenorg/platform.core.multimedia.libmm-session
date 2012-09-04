@@ -445,6 +445,14 @@ asm_monitor_callback(int handle, ASM_event_sources_t event_src, ASM_sound_comman
 __attribute__ ((destructor))
 void __mmsession_finalize(void)
 {
+	int error=0;
+
+	if(g_monitor_asm_handle != -1) {
+		if(!ASM_unregister_sound(g_monitor_asm_handle, ASM_EVENT_MONITOR, &error)) {
+			debug_error("ASM unregister failed");
+		}
+		g_monitor_asm_handle = -1;
+	}
 	_mm_session_util_delete_type(-1);
 }
 

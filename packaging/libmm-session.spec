@@ -1,10 +1,10 @@
 Name:       libmm-session
-Summary:    Mm-session development pkg for samsung
-Version: 0.2.0
-Release:    3
+Summary:    mm-session development pkg for samsung
+Version:    0.2.1
+Release:    1
 Group:      TO_BE/FILLED_IN
 License:    TO BE FILLED IN
-Source0:    libmm-session-%{version}.tar.bz2
+Source0:    libmm-session-%{version}.tar.gz
 Requires(post): /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
 BuildRequires:  pkgconfig(audio-session-mgr)
