@@ -1,10 +1,9 @@
 Name:       libmm-session
 Summary:    mm-session development pkg for samsung
-Version:    0.2.7
+Version:    0.2.6
 Release:    0
-Group:      System/Libraries
-License:    Apache License, Version 2.0
-URL:        http://source.tizen.org
+Group:      TO_BE/FILLED_IN
+License:    TO BE FILLED IN
 Source0:    libmm-session-%{version}.tar.gz
 Requires(post): /sbin/ldconfig
 Requires(postun): /sbin/ldconfig
