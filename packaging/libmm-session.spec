@@ -31,10 +31,10 @@ mm-session development package for samsung (devel)
 
 %build
 
-./autogen.sh
+%autogen
 CFLAGS="$CFLAGS -Wp,-D_FORTIFY_SOURCE=0"
-./configure --prefix=/usr 
-make %{?jobs:-j%jobs}
+%configure
+make %{?_smp_mflags} 
 
 %install
 rm -rf %{buildroot}
@@ -49,10 +49,10 @@ rm -rf %{buildroot}
 %files
 %manifest libmm-session.manifest
 %defattr(-,root,root,-)
-/usr/lib/libmmfsession.so.*
+%{_libdir}/libmmfsession.so.*
 
 %files devel
 %defattr(-,root,root,-)
-/usr/include/mmf/*.h
-/usr/lib/libmmfsession.so
-/usr/lib/pkgconfig/mm-session.pc
+%{_includedir}/mmf/*.h
+%{_libdir}/libmmfsession.so
+%{_libdir}/pkgconfig/mm-session.pc
