@@ -1,29 +1,25 @@
 Name:       libmm-session
-Summary:    mm-session development pkg for samsung
+Summary:    Multimedia Session Library
 Version:    0.2.6
 Release:    0
-Group:      TO_BE/FILLED_IN
-License:    TO BE FILLED IN
+Group:      Multimedia/Libraries
+License:    Apache-2.0
 Source0:    libmm-session-%{version}.tar.gz
-Requires(post): /sbin/ldconfig
-Requires(postun): /sbin/ldconfig
 BuildRequires:  pkgconfig(audio-session-mgr)
 BuildRequires:  pkgconfig(mm-common)
 
 
 %description
-mm-session development package for samsung
-
+Multimedia Session Library
 
 
 %package devel
-Summary:    mm-session development pkg for samsung (devel)
-Group:      Development/Libraries
+Summary:    Multimedia Session Library (Development)
+Group:      Development/Multimedia
 Requires:   %{name} = %{version}-%{release}
 
 %description devel
-mm-session development package for samsung (devel)
-
+%devel_desc
 
 %prep
 %setup -q
@@ -37,7 +33,6 @@ CFLAGS="$CFLAGS -Wp,-D_FORTIFY_SOURCE=0"
 make %{?_smp_mflags} 
 
 %install
-rm -rf %{buildroot}
 %make_install
 
 
@@ -48,6 +43,7 @@ rm -rf %{buildroot}
 
 %files
 %manifest libmm-session.manifest
+%license LICENSE
 %defattr(-,root,root,-)
 %{_libdir}/libmmfsession.so.*
 
