@@ -5,6 +5,7 @@ Release:    0
 Group:      Multimedia/Libraries
 License:    Apache-2.0
 Source0:    libmm-session-%{version}.tar.gz
+Source1001: 	libmm-session.manifest
 BuildRequires:  pkgconfig(audio-session-mgr)
 BuildRequires:  pkgconfig(mm-common)
 
@@ -23,6 +24,7 @@ Requires:   %{name} = %{version}-%{release}
 
 %prep
 %setup -q
+cp %{SOURCE1001} .
 
 
 %build
@@ -42,12 +44,13 @@ make %{?_smp_mflags}
 
 
 %files
-%manifest libmm-session.manifest
+%manifest %{name}.manifest
 %license LICENSE
 %defattr(-,root,root,-)
 %{_libdir}/libmmfsession.so.*
 
 %files devel
+%manifest %{name}.manifest
 %defattr(-,root,root,-)
 %{_includedir}/mmf/*.h
 %{_libdir}/libmmfsession.so
