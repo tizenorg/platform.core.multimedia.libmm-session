@@ -5,14 +5,12 @@ Release:    0
 Group:      Multimedia/Libraries
 License:    Apache-2.0
 Source0:    libmm-session-%{version}.tar.gz
-Source1001: 	libmm-session.manifest
+Source1001:     libmm-session.manifest
 BuildRequires:  pkgconfig(audio-session-mgr)
 BuildRequires:  pkgconfig(mm-common)
 
-
 %description
-Multimedia Session Library
-
+Multimedia Session Library package.
 
 %package devel
 Summary:    Multimedia Session Library (Development)
@@ -20,28 +18,24 @@ Group:      Development/Multimedia
 Requires:   %{name} = %{version}-%{release}
 
 %description devel
+Multimedia Session Library (Development)
 %devel_desc
 
 %prep
 %setup -q
 cp %{SOURCE1001} .
 
-
 %build
-
-%autogen
 CFLAGS="$CFLAGS -Wp,-D_FORTIFY_SOURCE=0"
-%configure
-make %{?_smp_mflags} 
+%reconfigure
+%__make %{?_smp_mflags} 
 
 %install
 %make_install
 
-
 %post -p /sbin/ldconfig
 
 %postun -p /sbin/ldconfig
-
 
 %files
 %manifest %{name}.manifest
