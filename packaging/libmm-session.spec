@@ -6,6 +6,7 @@ Group:      Multimedia/Libraries
 License:    Apache-2.0
 Source0:    libmm-session-%{version}.tar.gz
 Source1001:     libmm-session.manifest
+BuildRequires:  pkgconfig
 BuildRequires:  pkgconfig(audio-session-mgr)
 BuildRequires:  pkgconfig(mm-common)
 
