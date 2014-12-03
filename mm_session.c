@@ -81,8 +81,8 @@ EXPORT_API
 int mm_session_init(int sessiontype)
 {
 	debug_fenter();
-	return mm_session_init_ex(sessiontype, NULL, NULL);
-	debug_fleave();
+        debug_fleave();
+        return mm_session_init_ex(sessiontype, NULL, NULL);
 }
 
 EXPORT_API
