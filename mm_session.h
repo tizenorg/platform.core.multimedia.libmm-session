@@ -1,9 +1,9 @@
 /*
  * libmm-session
  *
- * Copyright (c) 2000 - 2011 Samsung Electronics Co., Ltd. All rights reserved.
+ * Copyright (c) 2000 - 2013 Samsung Electronics Co., Ltd. All rights reserved.
  *
- * Contact: Seungbae Shin <seungbae.shin@samsung.com>
+ * Contact: Seungbae Shin <seungbae.shin at samsung.com>, Sangchul Lee <sc11.lee at samsung.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,8 @@
 #ifndef	_MM_SESSION_H_
 #define	_MM_SESSION_H_
 
+#include <audio-session-manager-types.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -45,10 +47,35 @@ extern "C" {
   * This enumeration defines application's session types.
   */
 enum MMSessionType {
-	MM_SESSION_TYPE_SHARE = 0, 	/**< Share type : this type shares it's session with other share type application */
-	MM_SESSION_TYPE_EXCLUSIVE,	/**< Exclusive type : this type make previous session stop. And it does not allow other share type session start */
-	MM_SESSION_TYPE_NUM,
+	MM_SESSION_TYPE_MEDIA = 0,
+	MM_SESSION_TYPE_MEDIA_RECORD,
+	MM_SESSION_TYPE_ALARM,
+	MM_SESSION_TYPE_NOTIFY,
+	MM_SESSION_TYPE_EMERGENCY,
+	MM_SESSION_TYPE_CALL,
+	MM_SESSION_TYPE_VIDEOCALL,
+	MM_SESSION_TYPE_VOIP,
+	MM_SESSION_TYPE_VOICE_RECOGNITION,
+	MM_SESSION_TYPE_RECORD_AUDIO,
+	MM_SESSION_TYPE_RECORD_VIDEO,
+	MM_SESSION_TYPE_NUM
 };
+
+/**
+  * This enumeration defines behavior of update.
+  */
+typedef enum {
+	MM_SESSION_UPDATE_TYPE_ADD,
+	MM_SESSION_UPDATE_TYPE_REMOVE,
+	MM_SESSION_UPDATE_TYPE_NUM
+}session_update_type_t;
+
+/**
+  * This define is for session options
+  */
+#define MM_SESSION_OPTION_PAUSE_OTHERS                      ASM_SESSION_OPTION_PAUSE_OTHERS
+#define MM_SESSION_OPTION_UNINTERRUPTIBLE                   ASM_SESSION_OPTION_UNINTERRUPTIBLE
+#define MM_SESSION_OPTION_RESUME_BY_SYSTEM_OR_MEDIA_PAUSED  ASM_SESSION_OPTION_RESUME_BY_MEDIA_PAUSED
 
 /**
   * This enumeration defines session callback message type.
@@ -68,10 +95,25 @@ typedef enum {
 	MM_SESSION_EVENT_EARJACK_UNPLUG,
 	MM_SESSION_EVENT_RESOURCE_CONFLICT,
 	MM_SESSION_EVENT_EMERGENCY,
-	MM_SESSION_EVENT_RESUMABLE_MEDIA,
+	MM_SESSION_EVENT_NOTIFICATION,
 }session_event_t;
 
+typedef enum {
+	MM_SESSION_WATCH_EVENT_IGNORE = -1,
+	MM_SESSION_WATCH_EVENT_CALL = 0,
+	MM_SESSION_WATCH_EVENT_VIDEO_CALL,
+	MM_SESSION_WATCH_EVENT_ALARM,
+	MM_SESSION_WATCH_EVENT_NUM
+}session_watch_event_t;
+
+typedef enum {
+	MM_SESSION_WATCH_STATE_STOP = 0,
+	MM_SESSION_WATCH_STATE_PLAYING,
+	MM_SESSION_WATCH_STATE_NUM
+}session_watch_state_t;
+
 typedef void (*session_callback_fn) (session_msg_t msg, session_event_t event, void *user_param);
+typedef void (*watch_callback_fn) (session_watch_event_t event, session_watch_state_t state, void *user_param);
 
 /**
  * This function defines application's Multimedia Session policy
@@ -95,7 +137,7 @@ static int _create(void *data)
 	int ret = 0;
 
 	// Initialize Multimedia Session Type
-	ret = mm_session_init(MM_SESSION_TYPE_SHARE);
+	ret = mm_session_init(MM_SESSION_TYPE_MEDIA);
 	if(ret < 0)
 	{
 		printf("Can not initialize session \n");
@@ -183,7 +225,7 @@ static int _create(void *data)
 	int ret = 0;
 
 	// Initialize Multimedia Session Type with callback
-	ret = mm_session_init_ex(MM_SESSION_TYPE_SHARE, session_cb, (void*)ad);
+	ret = mm_session_init_ex(MM_SESSION_TYPE_MEDIA, session_cb, (void*)ad);
 	if(ret < 0)
 	{
 		printf("Can not initialize session \n");
@@ -246,7 +288,7 @@ static int _create(void *data)
 	int ret = 0;
 
 	// Initialize Multimedia Session Type
-	ret = mm_session_init(MM_SESSION_TYPE_SHARE);
+	ret = mm_session_init(MM_SESSION_TYPE_MEDIA);
 	if(ret < 0)
 	{
 		printf("Can not initialize session \n");
@@ -293,8 +335,66 @@ int mm_session_finish(void);
  * @see		mm_session_init
  * @since
  */
-int mm_session_get_current_type (int *sessiontype);
+int mm_session_get_current_type(int *sessiontype);
 
+/**
+ * This function get current application's Multimedia Session information
+ *
+ * @param	session_type	[out] Current Multimedia Session type
+ * @param	session_options	[out] Current Multimedia Session options
+ * @return	This function returns MM_ERROR_NONE on success, or negative value
+ *			with error code.
+ * @see
+ * @since
+ */
+int mm_session_get_current_information(int *session_type, int *session_options);
+
+/**
+ * This function update application's Multimedia Session options
+ *
+ * @param	update_type	[in] add or remove options
+ * @param	session_options	[in] Multimedia Session options to be updated
+ * @return	This function returns MM_ERROR_NONE on success, or negative value
+ *			with error code.
+ * @see
+ * @since
+ */
+int mm_session_update_option(session_update_type_t update_type, int options);
+
+/**
+ * This function add a watch callback
+ *
+ * @param	watchevent	[in]	The session type to be watched
+ * @param	watchstate	[in]	The session state of the session type of first argument to be watched
+ * @param	callback	[in]	The callback which will be called when the watched session state was activated
+ * @param	user_param	[in]	The user param passed from the callback registration function
+ * @return	This function returns MM_ERROR_NONE on success, or negative value
+ *			with error code.
+ * @see
+ * @since
+ */
+int mm_session_add_watch_callback(int watchevent, int watchstate, watch_callback_fn callback, void* user_param);
+
+/**
+ * This function removes a watch callback corresponding with two arguments
+ *
+ * @param	watchevent	[in]	The session type to be removed
+ * @param	watchstate	[in]	The session state to be removed
+ * @return	This function returns MM_ERROR_NONE on success, or negative value
+ *			with error code.
+ * @see
+ * @since
+ */
+int mm_session_remove_watch_callback(int watchevent, int watchstate);
+
+/**
+ * This function initialize resumption of other ASM handles which were paused by this session
+ * It can be used only when call series or voice recognition session is set
+ *
+ * @return	This function returns MM_ERROR_NONE on success, or negative value
+ *			with error code.
+ */
+int mm_session_reset_resumption_info(void);
 
 /**
 	@}
