@@ -1,12 +1,11 @@
 Name:       libmm-session
 Summary:    Multimedia Session Library
-Version:    0.2.6
+Version:    0.2.7
 Release:    0
 Group:      Multimedia/Libraries
 License:    Apache-2.0
 Source0:    libmm-session-%{version}.tar.gz
 Source1001:     libmm-session.manifest
-BuildRequires:  pkgconfig(audio-session-mgr)
 BuildRequires:  pkgconfig(mm-common)
 
 %description
@@ -28,7 +27,7 @@ cp %{SOURCE1001} .
 %build
 CFLAGS="$CFLAGS -Wp,-D_FORTIFY_SOURCE=0"
 %reconfigure
-%__make %{?_smp_mflags} 
+%__make %{?_smp_mflags}
 
 %install
 %make_install
