@@ -31,8 +31,6 @@
 #ifndef	_MM_SESSION_H_
 #define	_MM_SESSION_H_
 
-#include <audio-session-manager-types.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -73,9 +71,9 @@ typedef enum {
 /**
   * This define is for session options
   */
-#define MM_SESSION_OPTION_PAUSE_OTHERS                      ASM_SESSION_OPTION_PAUSE_OTHERS
-#define MM_SESSION_OPTION_UNINTERRUPTIBLE                   ASM_SESSION_OPTION_UNINTERRUPTIBLE
-#define MM_SESSION_OPTION_RESUME_BY_SYSTEM_OR_MEDIA_PAUSED  ASM_SESSION_OPTION_RESUME_BY_MEDIA_PAUSED
+#define MM_SESSION_OPTION_PAUSE_OTHERS                      0x0001
+#define MM_SESSION_OPTION_UNINTERRUPTIBLE                   0x0002
+#define MM_SESSION_OPTION_RESUME_BY_SYSTEM_OR_MEDIA_PAUSED  0x0010
 
 /**
   * This enumeration defines session callback message type.

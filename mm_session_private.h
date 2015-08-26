@@ -35,6 +35,7 @@ extern "C" {
 #endif
 
 #include <mm_session.h>
+#include <stdbool.h>
 
 typedef enum {
 	MM_SUBSESSION_TYPE_VOICE = 0,
