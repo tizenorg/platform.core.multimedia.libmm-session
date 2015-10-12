@@ -1,6 +1,6 @@
 Name:       libmm-session
 Summary:    Multimedia Session Library
-Version:    0.2.7
+Version:    0.2.8
 Release:    0
 Group:      Multimedia/Libraries
 License:    Apache-2.0

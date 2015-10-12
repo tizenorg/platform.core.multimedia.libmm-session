@@ -30,11 +30,19 @@
 #include <errno.h>
 #include <glib.h>
 #include <pthread.h>
+#include <signal.h>
 
 #define EXPORT_API __attribute__((__visibility__("default")))
 #define MAX_FILE_LENGTH 256
 
 int g_session_type = -1;
+
+struct sigaction session_int_old_action;
+struct sigaction session_abrt_old_action;
+struct sigaction session_segv_old_action;
+struct sigaction session_term_old_action;
+struct sigaction session_sys_old_action;
+struct sigaction session_xcpu_old_action;
 
 EXPORT_API
 int mm_session_init(int sessiontype)
@@ -296,7 +304,7 @@ int _mm_session_util_delete_information(int app_pid)
 		mypid = (pid_t)app_pid;
 
 	////// DELETE SESSION TYPE /////////
-	snprintf(filename, sizeof(filename)-1, "/tmp/mm_session_%d",mypid);
+	snprintf(filename, sizeof(filename)-1, "/tmp/mm_session_%d", mypid);
 	if(-1 ==  unlink(filename))
 		return MM_ERROR_FILE_NOT_FOUND;
 	////// DELETE SESSION TYPE /////////
@@ -321,7 +329,7 @@ int _mm_session_util_write_type(int app_pid, int sessiontype)
 		mypid = (pid_t)app_pid;
 
 	////// WRITE SESSION TYPE /////////
-	snprintf(filename, sizeof(filename)-1, "/tmp/mm_session_%d",mypid);
+	snprintf(filename, sizeof(filename)-1, "/tmp/mm_session_%d", mypid);
 	fd = open(filename, O_WRONLY | O_CREAT, 0644 );
 	if(fd < 0) {
 		debug_error("open() failed with %d",errno);
@@ -358,7 +366,7 @@ int _mm_session_util_read_type(int app_pid, int *sessiontype)
 		mypid = (pid_t)app_pid;
 
 	////// READ SESSION TYPE /////////
-	snprintf(filename, sizeof(filename)-1, "/tmp/mm_session_%d",mypid);
+	snprintf(filename, sizeof(filename)-1, "/tmp/mm_session_%d", mypid);
 	fd = open(filename, O_RDONLY);
 	if(fd < 0) {
 		return MM_ERROR_INVALID_HANDLE;
@@ -396,7 +404,7 @@ int _mm_session_util_write_information(int app_pid, int session_type, int flags)
 	}
 
 	////// WRITE SESSION INFO /////////
-	snprintf(filename, sizeof(filename)-1, "/tmp/mm_session_%d",mypid);
+	snprintf(filename, sizeof(filename)-1, "/tmp/mm_session_%d", mypid);
 	fd = open(filename, O_WRONLY | O_CREAT, 0644 );
 	if(fd < 0) {
 		debug_error("open() failed with %d",errno);
@@ -437,7 +445,7 @@ int _mm_session_util_read_information(int app_pid, int *session_type, int *flags
 	}
 
 	////// READ SESSION INFO /////////
-	snprintf(filename, sizeof(filename)-1, "/tmp/mm_session_%d",mypid);
+	snprintf(filename, sizeof(filename)-1, "/tmp/mm_session_%d", mypid);
 	fd = open(filename, O_RDONLY);
 	if(fd < 0) {
 		return MM_ERROR_INVALID_HANDLE;
@@ -455,19 +463,99 @@ int _mm_session_util_read_information(int app_pid, int *session_type, int *flags
 	return MM_ERROR_NONE;
 }
 
-__attribute__ ((destructor))
-void __mmsession_finalize(void)
+void __session_signal_handler(int signo)
 {
-	debug_fenter();
+	char* filename = NULL;
+	char str_error[256];
 
-	_mm_session_util_delete_information(-1);
+	debug_warning("ENTER, sig.num(%d)", signo);
 
-	debug_fleave();
+	/* signal block -------------- */
+	sigset_t old_mask, all_mask;
+	sigfillset(&all_mask);
+	sigprocmask(SIG_BLOCK, &all_mask, &old_mask);
+
+	filename = g_strdup_printf("/tmp/mm_session_%d", getpid());
+	if (!remove(filename)) {
+		debug_log(" remove %s success\n", filename);
+	} else {
+		strerror_r (errno, str_error, sizeof (str_error));
+		debug_error(" remove %s failed with %s\n", filename, str_error);
+	}
+
+	g_free(filename);
+
+	sigprocmask(SIG_SETMASK, &old_mask, NULL);
+	/* signal unblock ------------ */
+
+	switch (signo) {
+	case SIGINT:
+		sigaction(SIGINT, &session_int_old_action, NULL);
+		raise(signo);
+		break;
+	case SIGABRT:
+		sigaction(SIGABRT, &session_abrt_old_action, NULL);
+		raise(signo);
+		break;
+	case SIGSEGV:
+		sigaction(SIGSEGV, &session_segv_old_action, NULL);
+		raise(signo);
+		break;
+	case SIGTERM:
+		sigaction(SIGTERM, &session_term_old_action, NULL);
+		raise(signo);
+		break;
+	case SIGSYS:
+		sigaction(SIGSYS, &session_sys_old_action, NULL);
+		raise(signo);
+		break;
+	case SIGXCPU:
+		sigaction(SIGXCPU, &session_xcpu_old_action, NULL);
+		raise(signo);
+		break;
+	default:
+		break;
+	}
+
+	debug_warning("LEAVE");
 }
 
 __attribute__ ((constructor))
 void __mmsession_initialize(void)
 {
+	struct sigaction session_action;
+	session_action.sa_handler = __session_signal_handler;
+	session_action.sa_flags = SA_NOCLDSTOP;
 
+	debug_fenter();
+
+	sigemptyset(&session_action.sa_mask);
+
+	sigaction(SIGINT, &session_action, &session_int_old_action);
+	sigaction(SIGABRT, &session_action, &session_abrt_old_action);
+	sigaction(SIGSEGV, &session_action, &session_segv_old_action);
+	sigaction(SIGTERM, &session_action, &session_term_old_action);
+	sigaction(SIGSYS, &session_action, &session_sys_old_action);
+	sigaction(SIGXCPU, &session_action, &session_xcpu_old_action);
+
+	debug_fleave();
+}
+
+__attribute__ ((destructor))
+void __mmsession_finalize(void)
+{
+
+	debug_fenter();
+
+	_mm_session_util_delete_information(-1);
+
+	sigaction(SIGINT, &session_int_old_action, NULL);
+	sigaction(SIGABRT, &session_abrt_old_action, NULL);
+	sigaction(SIGSEGV, &session_segv_old_action, NULL);
+	sigaction(SIGTERM, &session_term_old_action, NULL);
+	sigaction(SIGSYS, &session_sys_old_action, NULL);
+	sigaction(SIGXCPU, &session_xcpu_old_action, NULL);
+
+	debug_fleave();
 }
 
