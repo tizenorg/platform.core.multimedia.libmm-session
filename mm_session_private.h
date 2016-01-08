@@ -37,6 +37,10 @@ extern "C" {
 #include <mm_session.h>
 #include <stdbool.h>
 
+/* This private definition is for marking that this process is using the stream info. created by sound-manager.
+ * It'll be maintained for backward compatibility regarding session feature that is deprecated since tizen 3.0. */
+#define MM_SESSION_TYPE_REPLACED_BY_STREAM    1111
+
 typedef enum {
 	MM_SUBSESSION_TYPE_VOICE = 0,
 	MM_SUBSESSION_TYPE_RINGTONE,

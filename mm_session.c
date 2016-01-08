@@ -390,7 +390,8 @@ int _mm_session_util_write_information(int app_pid, int session_type, int flags)
 	char filename[MAX_FILE_LENGTH];
 	int result_info = 0;
 
-	if(session_type < MM_SESSION_TYPE_MEDIA || session_type >= MM_SESSION_TYPE_NUM) {
+	if ((session_type != MM_SESSION_TYPE_REPLACED_BY_STREAM) &&
+	    (session_type < MM_SESSION_TYPE_MEDIA || session_type >= MM_SESSION_TYPE_NUM)) {
 		return MM_ERROR_INVALID_ARGUMENT;
 	}
 	if(flags < 0) {
@@ -413,7 +414,7 @@ int _mm_session_util_write_information(int app_pid, int session_type, int flags)
 
 	result_info = (flags) | (session_type << 16);
 	write(fd, &result_info, sizeof(int));
-	if(0 > fchmod (fd, 00777)) {
+	if (0 > fchmod (fd, 00777)) {
 		debug_error("fchmod failed with %d", errno);
 	} else {
 		debug_warning("write session information(%x) to /tmp/mm_session_%d", result_info, mypid);
